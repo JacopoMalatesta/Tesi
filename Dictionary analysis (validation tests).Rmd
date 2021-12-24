@@ -1,0 +1,452 @@
+---
+title: "Dictionary analysis (validation tests)"
+author: "Jacopo Malatesta"
+date: "12/22/2021"
+output:
+  html_document: 
+    toc: true
+    toc_depth: 4
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Libraries
+
+```{r, message=FALSE, warning=FALSE}
+setwd("C:/Users/jacop/Tesi/")
+
+library(tidyverse)
+library(dtplyr)
+library(data.table)
+library(quanteda)
+
+```
+
+# Data
+
+The dataset
+```{r}
+load("data/parliamentary_groups2.rds")
+
+```
+
+Turning the dataframe into a lazy dataframe
+```{r}
+texts <- lazy_dt(Texts)
+
+```
+
+Casting 'legislatura' as integer
+```{r}
+texts <- texts %>% mutate(legislatura = as.integer(legislatura)) %>% as_tibble()
+
+```
+
+Keeping only the speeches from the Second Republic
+```{r}
+texts <- texts %>% filter(legislatura >= 12) %>% as_tibble()
+
+```
+
+Decadri & Boussalis' additional stopwords
+```{r}
+db_additional_stopwords  <- suppressMessages(read_csv("data/it_stopwords_new_list.csv")) %>% 
+                            pull(stopwords)
+
+```
+
+Procedural stopwords
+```{r}
+procedural_stopwords <- suppressMessages(read_csv("data/it_stopwords_procedural.csv")) %>% 
+                        pull(it_stopwords_procedural)
+
+```
+
+# Preprocessing
+
+Creating the corpus
+
+```{r}
+my_corpus <- corpus(texts, text_field = "textclean")
+
+```
+
+Creating the tokens
+
+```{r}
+toks <- tokens(my_corpus, 
+               remove_punct = TRUE, 
+               remove_symbols = TRUE, 
+               remove_numbers = TRUE, 
+               remove_separators = TRUE)
+
+```
+
+Removing the default stopwords
+
+```{r}
+cleaned_toks <- tokens_remove(toks, pattern = stopwords("it"), padding = TRUE)
+
+```
+
+Removing the additional stopwords
+
+```{r}
+cleaned_toks <- tokens_remove(cleaned_toks, pattern = db_additional_stopwords)
+
+```
+
+Removing the procedural stopwords
+
+```{r}
+cleaned_toks <- tokens_remove(cleaned_toks, pattern = procedural_stopwords)
+
+```
+
+# Dictionaries
+
+Building Rooduijn & Pauwels' dictionary
+
+```{r}
+anti_elitism <- c("elit*", "consens*", "antidemocratic*", "referend*", "corrot*", "propagand*", 
+                  "politici*","ingann*", "tradi*", "vergogn*", "scandal*", "verita", "disonest*", 
+                  "partitocrazia", "menzogn*", "mentir*")
+
+rp_dictionary <- dictionary(list(anti_elitism = anti_elitism))
+
+```
+
+Building Decadri and Boussalis' dictionary
+
+```{r}
+anti_elitism <- c("antidemocratic*", "casta", "consens*", "corrot*", "disonest*", "elit*", 
+                  "establishment", "ingann*", "mentir*", "menzogn*", "partitocrazia", "propagand*", 
+                  "scandal*", "tradim*", "tradir*", "tradit*", "vergogn*", "verita")
+
+people_centrism  <- c("abitant*", "cittadin*", "consumator*", "contribuent*", "elettor*", "gente", "popol*")
+
+db_dictionary <- dictionary(list(anti_elitism = anti_elitism, 
+                                 people_centrism = people_centrism))
+
+```
+
+
+# Wrapper function
+
+```{r}
+dict_analysis <- function(tokens, dictionary) {
+  
+  if (dictionary == "Rooduijn_Pauwels") {
+  
+  my_dict_lookup <- tokens_lookup(x = tokens, dictionary = rp_dictionary)
+  
+  dat <- dfm(my_dict_lookup) %>% 
+         convert(., to = "data.frame") %>% 
+         mutate(party = docvars(my_corpus) %>% pull(gruppoP),
+                year = docvars(my_corpus) %>% pull(year),
+                group_cluster = docvars(my_corpus) %>% pull(group_cluster),
+                total_toks = ntoken(cleaned_toks),
+                perc_of_populist_toks = anti_elitism / total_toks,
+                standardized_perc_of_populist_toks = scale(perc_of_populist_toks)) %>% 
+         relocate(doc_id, party, year, group_cluster, anti_elitism, total_toks, perc_of_populist_toks, 
+                 perc_of_populist_toks, standardized_perc_of_populist_toks) %>% 
+         as_tibble()
+
+  }
+  
+  if (dictionary == "Decadri_Boussalis") {
+    
+    my_dict_lookup <- tokens_lookup(x = tokens, dictionary = db_dictionary)
+    
+    dat <- dfm(my_dict_lookup) %>% 
+           convert(., to = "data.frame") %>% 
+           mutate(party = docvars(my_corpus) %>% pull(gruppoP),
+                  year = docvars(my_corpus) %>% pull(year),
+                  group_cluster = docvars(my_corpus) %>% pull(group_cluster),
+                  total_toks = ntoken(cleaned_toks),
+                  populist_toks = anti_elitism + people_centrism,
+                  perc_of_populist_toks = populist_toks / total_toks,
+                  standardized_perc_of_populist_toks = scale(perc_of_populist_toks)) %>% 
+          relocate(doc_id, party, year, group_cluster, anti_elitism, people_centrism, 
+                   populist_toks, total_toks, perc_of_populist_toks, perc_of_populist_toks,
+                   standardized_perc_of_populist_toks) %>% 
+          as_tibble()
+    
+  }
+  
+  return(dat)
+  
+}
+
+```
+
+# Rooduijn and Pauwels 
+
+```{r}
+rp_df <- dict_analysis(tokens = cleaned_toks, dictionary = "Rooduijn_Pauwels")
+
+```
+
+## Face validity
+
+ANOVA
+
+```{r}
+anova_rp <- aov(perc_of_populist_toks ~ party, data = rp_df)
+
+summary(anova_rp)
+
+```
+
+Most populist party-year combinations.
+
+```{r}
+rp_df %>% 
+group_by(party, year) %>% 
+summarize(mean_perc_of_populist_toks = mean(perc_of_populist_toks, na.rm = TRUE),
+          mean_standardized_perc_of_populist_toks = mean(standardized_perc_of_populist_toks, na.rm = TRUE),
+         .groups = "keep") %>% 
+arrange(desc(mean_standardized_perc_of_populist_toks)) %>% 
+head(20)
+
+```
+
+Least populist party-year combinations
+
+```{r}
+rp_df %>% 
+group_by(party, year) %>% 
+summarize(mean_perc_of_populist_toks = mean(perc_of_populist_toks, na.rm = TRUE),
+          mean_standardized_perc_of_populist_toks = mean(standardized_perc_of_populist_toks, na.rm = TRUE),
+          .groups = "keep") %>% 
+arrange(desc(mean_standardized_perc_of_populist_toks)) %>% 
+tail(20)
+
+```
+
+## External validity
+### CHES
+
+Loading the CHES dataset
+
+```{r}
+ches <- read_csv("data/1999-2019_CHES_dataset_means(v2).csv", show_col_types = FALSE)
+
+```
+
+The countrycode for Italy is 8. The following is a list of all Italian parties in the CHES dataset in the 2014-2019 time period.
+
+```{r}
+ches %>% filter(country == 8 & year >= 2014 & year <= 2019) %>% distinct(party)
+
+```
+
+While these are the parties included in our dataset in the same timeframe
+
+```{r}
+rp_df %>% filter(year >= 2014 & year <= 2019) %>% distinct(party)
+
+```
+
+'Vallée d'Aoste', 'Südtiroler Volkspartei' and 'Radicali Italiani' are not part of our dataset, so let's drop them from the CHES dataset.
+
+```{r}
+to_drop <- c('VdA', 'SVP', 'RI')
+
+ches <- ches %>% 
+        filter(country == 8 & year >= 2014 & year <= 2019 & (!party %in% to_drop)) 
+
+```
+
+Let's now compare how R&P' dictionary and the CHES dataset ranked party-year combinations by populism in 2014 and 2019. We'll drop the "Mixed group" and "Italia Viva" as these two parliamentary groups are absent from the CHES dataset.
+
+```{r}
+rp_df %>% 
+filter((year == 2014 | year == 2019) & party != "MISTO" & party != "IV") %>% 
+group_by(party, year) %>% 
+summarize(mean_perc_of_populist_toks = mean(perc_of_populist_toks),
+          mean_standardized_perc_of_populist_toks = mean(standardized_perc_of_populist_toks, na.rm = TRUE),
+          .groups = "keep") %>% 
+arrange(desc(mean_perc_of_populist_toks))
+
+```
+
+```{r}
+ches %>% 
+group_by(party, year) %>% 
+summarize(mean_anti_elite_salience = mean(antielite_salience), .groups = "keep") %>% 
+arrange(desc(mean_anti_elite_salience))
+
+```
+
+
+### PopuList
+
+Loading the PopuList dataset
+```{r}
+populist <- readxl::read_xlsx("data/populist-version-2-20200626.xlsx")
+
+
+```
+
+All the Italian parties in the PopuList dataset
+```{r}
+populist %>% filter(country_name == "Italy") %>% distinct(party_name)
+
+```
+
+"Fiamma tricolore", "Lega d'Azione Meridionale", "Movimento Sociale Italiano" are not in our dataset. So let's drop them from the PopuList dataset.
+```{r}
+to_drop <- c("Fiamma Tricolore", "Lega d'Azione Meridionale", "Movimento Sociale Italiano")
+
+populist <- populist %>% 
+filter(country_name == "Italy" & (!party_name %in% to_drop))
+
+```
+
+Let's compare the populism scores between PopuList and R&D' dictionary by focusing on those parties that are present in both datasets. There is no year variable in the PopuList dataset so we're only grouping by party.  
+
+```{r}
+populist %>% 
+group_by(party_name) %>% 
+summarize(mean_populist = mean(populist)) %>% 
+arrange(desc(mean_populist))
+
+```
+
+
+```{r}
+to_keep <- c("F-ITA", "FI", "PDL", "FI-PDL", "FDI-AN", "FDI", "LEGA-N", "LEGA-NORD-P", "LNA", "LEGA", "LNP", "M5S", 
+             "RC-PROGR", "COMUNISTA", "RC", "COM/IT/", "RC-SE", "SI-SEL-POS-LU")
+
+rp_df %>% 
+filter(party %in% to_keep) %>% 
+group_by(party) %>% 
+summarize(mean_perc_of_populist_toks = mean(perc_of_populist_toks),
+          mean_standardized_perc_of_populist_toks = mean(standardized_perc_of_populist_toks, na.rm = TRUE)) %>% 
+arrange(desc(mean_perc_of_populist_toks))
+
+```
+
+
+# Decadri and Boussalis
+
+```{r}
+db_df <- dict_analysis(tokens = cleaned_toks, dictionary = "Decadri_Boussalis")
+
+```
+
+## Face validity
+
+ANOVA
+```{r}
+anova_db <- aov(perc_of_populist_toks ~ party, data = db_df)
+
+summary(anova_db)
+
+```
+
+Most populist party-year combinations
+
+```{r}
+db_df %>% 
+group_by(party, year) %>% 
+summarize(mean_perc_of_populist_toks = mean(perc_of_populist_toks, na.rm = TRUE),
+          mean_standardized_perc_of_populist_toks = mean(standardized_perc_of_populist_toks, na.rm = TRUE),
+          .groups = "keep") %>% 
+arrange(desc(mean_standardized_perc_of_populist_toks)) %>% 
+head(20)
+
+```
+
+Least populist party-year combinations
+```{r}
+db_df %>% 
+group_by(party, year) %>% 
+summarize(mean_perc_of_populist_toks = mean(perc_of_populist_toks, na.rm = TRUE),
+          mean_standardized_perc_of_populist_toks = mean(standardized_perc_of_populist_toks, na.rm = TRUE),
+          .groups = "keep") %>% 
+arrange(desc(mean_standardized_perc_of_populist_toks)) %>% 
+tail(20)
+
+```
+
+Loading the CHES dataset again
+```{r}
+ches <- read_csv("data/1999-2019_CHES_dataset_means(v2).csv", show_col_types = FALSE)
+
+```
+
+The following are the Italian parties in the CHES dataset for the year 2019
+
+```{r}
+ches %>% filter(country == 8 & year == 2019) %>% select(party, antielite_salience, people_vs_elite)
+
+```
+
+The parties in our dataset in the same year
+
+```{r}
+db_df %>% filter(year == 2019) %>% distinct(party)
+
+```
+
+
+"Radicali Italiani" and "Südtiroler Volkspartei" are not in our dataset so we'll drop them from CHES
+
+```{r}
+to_drop <- c("RI", "SVP")
+
+ches <- ches %>% 
+filter(country == 8 & year == 2019 & (!party %in% to_drop))
+
+```
+
+Let's compute the average populist value for each party in the CHES dataset by summing the people vs elite and the anti-elite salience variables and then taking the mean
+
+```{r}
+ches %>% 
+group_by(party) %>% 
+summarize(mean_populism = mean(people_vs_elite + antielite_salience)) %>% 
+arrange(desc(mean_populism))
+
+```
+
+```{r}
+to_drop <- c("IV", "MISTO")
+
+db_df %>% 
+filter(year == 2019 & (! party %in% to_drop)) %>% 
+group_by(party) %>% 
+summarize(mean_perc_of_populist_toks = mean(perc_of_populist_toks),
+          mean_standardized_perc_of_populist_toks = mean(standardized_perc_of_populist_toks, na.rm = TRUE)) %>% 
+arrange(desc(mean_perc_of_populist_toks))
+
+```
+
+Let's now compare D&B' dictionary with the PopuList dataset.
+
+```{r}
+populist %>% 
+group_by(party_name) %>% 
+summarize(mean_populist = mean(populist)) %>% 
+arrange(desc(mean_populist))
+
+```
+
+
+```{r}
+to_keep <- c("F-ITA", "FI", "PDL", "FI-PDL", "FDI-AN", "FDI", "LEGA-N", "LEGA-NORD-P", "LNA", "LEGA", "LNP", "M5S", 
+             "RC-PROGR", "COMUNISTA", "RC", "COM/IT/", "RC-SE", "SI-SEL-POS-LU")
+
+db_df %>% 
+filter(party %in% to_keep) %>% 
+group_by(party) %>% 
+summarize(mean_perc_of_populist_toks = mean(perc_of_populist_toks),
+          mean_standardized_perc_of_populist_toks = mean(standardized_perc_of_populist_toks, na.rm = TRUE)) %>% 
+arrange(desc(mean_perc_of_populist_toks))
+
+```
+
