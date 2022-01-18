@@ -50,27 +50,23 @@ people_centrism  <- c("abitant*", "cittadin*", "consumator*", "contribuent*", "e
 db_dictionary <- dictionary(list(anti_elitism = anti_elitism, 
                                  people_centrism = people_centrism))
 
-grundl <- readxl::read_xlsx("data/gruendl_terms_Fedra_Silvia.xlsx", sheet = 2)  %>% 
-filter(!is.na(terms))  %>% # Removing null values 
-mutate(terms = str_split(terms, ', ')) %>% # Some cells contain more than one value: let's split and unnest everything
-unnest(cols = c(terms)) %>% 
-distinct(terms) %>% # Removing duplicate terms
-pull(terms) # Extracting the 'terms' vector
+grundl <- readxl::read_xlsx("data/gruendl_terms_Fedra_Silvia_comments3.xlsx", sheet = 1) %>% 
+filter(!is.na(Italian_integral)) %>% # Removing nulls
+mutate(Italian_integral = str_split(Italian_integral, ', ')) %>% # Some cells contain more than one value: let's split and unnest everything
+unnest(cols = c(Italian_integral)) %>% 
+distinct(Italian_integral) %>% # Removing duplicate terms
+pull(Italian_integral) # Extracting the 'terms' vector
 
 g_dictionary <- dictionary(list(populism = grundl))
 
-grundl_2 <- readxl::read_xlsx("data/gruendl_terms_Fedra_Silvia.xlsx", sheet = 3)  %>% 
-filter(!is.na(terms))  %>%  
-mutate(terms = str_split(terms, ', ')) %>% 
-unnest(cols = c(terms)) %>% 
-distinct(terms) %>% 
-pull(terms)
+dbg <- readxl::read_xlsx("data/gruendl_terms_Fedra_Silvia_comments3.xlsx", sheet = 1) %>% 
+filter(!is.na(Decadri_Boussalis_Grundl)) %>% 
+mutate(Decadri_Boussalis_Grundl = str_split(Decadri_Boussalis_Grundl, ', ')) %>% 
+unnest(cols = c(Decadri_Boussalis_Grundl)) %>% 
+distinct(Decadri_Boussalis_Grundl) %>% 
+pull(Decadri_Boussalis_Grundl)
 
-grundl_2
-
-dbg <- sort(unique(unlist(c(anti_elitism, people_centrism, grundl_2))))
 dbg_dictionary <- dictionary(list(populism = dbg))
-dbg
 
 speeches_corpus <- corpus(texts, text_field = "textclean")
 
@@ -310,3 +306,55 @@ dict_analysis(tokens = manifesto_toks, data = "manifesto", dictionary = "Grundl"
 dict_analysis(tokens = manifesto_toks, data = "manifesto", dictionary = "Decadri_Boussalis")
 
 dict_analysis(tokens = manifesto_toks, data = "manifesto", dictionary = "Decadri_Boussalis_Grundl")
+
+kwic(x = manifesto_toks, pattern = phrase("puzza sotto il naso"))
+
+kwic(x = manifesto_toks, pattern = phrase("senso di superiorita"))
+
+kwic(x = manifesto_toks, pattern = phrase("pezz? gross?"))
+
+kwic(x = manifesto_toks, pattern = phrase("uomo della strada"))
+
+kwic(x = manifesto_toks, pattern = phrase("democrazia diretta"))
+
+kwic(x = manifesto_toks, pattern = phrase("italiano medio"))
+
+kwic(x = manifesto_toks, pattern = phrase("uomo medio"))
+
+kwic(x = manifesto_toks, pattern = phrase("torre d avorio"))
+
+kwic(x = manifesto_toks, pattern = phrase("solit? partit"))
+
+kwic(x = manifesto_toks, pattern = phrase("vecch? partit?"))
+
+kwic(x = manifesto_toks, pattern = phrase("uomini onesti"))
+
+kwic(x = manifesto_toks, pattern = phrase("senso comune"))
+
+kwic(x = manifesto_toks, pattern = phrase("attaccat? all? poltron?"))
+
+kwic(x = manifesto_toks, pattern = phrase("assetat? di potere"))
+
+kwic(x = manifesto_toks, pattern = phrase("comun? mortal?"))
+
+kwic(x = manifesto_toks, pattern = phrase("bugie dei partiti"))
+
+kwic(x = manifesto_toks, pattern = phrase("falsita dei partiti"))
+
+kwic(x = manifesto_toks, pattern = phrase("senza valori"))
+
+kwic(x = manifesto_toks, pattern = phrase("pseudo-partit?"))
+
+kwic(x = manifesto_toks, pattern = phrase("sistema-partito"))
+
+kwic(x = manifesto_toks, pattern = phrase("non democratic*"))
+
+kwic(x = manifesto_toks, pattern = phrase("prendere in giro"))
+
+kwic(x = manifesto_toks, pattern = phrase("dittatur* di partito"))
+
+kwic(x = manifesto_toks, pattern = phrase("teatr* politico"))
+
+kwic(x = manifesto_toks, pattern = phrase("cosiddett? giornalist?"))
+
+kwic(x = manifesto_toks, pattern = phrase("cosiddetti media"))
