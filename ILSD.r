@@ -135,7 +135,7 @@ ilsd %>% distinct(PARTY) %>% arrange(PARTY) %>% pull()
 texts %>% distinct(gruppoP) %>% arrange(gruppoP) %>% pull()
 
 texts <- texts %>% 
-mutate(gruppoP = case_when(
+mutate(gruppoP_recoded = case_when(
 gruppoP %in% c('CCD', 'CCD-CDU', 'UNIONE DEI DEMOCRATICI CRISTIANI E DEI DEMOCRATICI DI CENTRO', 'UDCPTP')  ~ 'UDC',
 gruppoP == 'COMUNISTA' ~ 'RC',
 gruppoP == 'DC-PPI' ~ 'DC',
@@ -154,7 +154,7 @@ gruppoP == 'SI' ~ 'SI-SEL-POS-LU',
 gruppoP == 'VERDE' ~ 'VERDI',
 TRUE ~ gruppoP))
 
-texts %>% distinct(gruppoP) %>% arrange(gruppoP) %>% pull()
+texts %>% distinct(gruppoP_recoded) %>% arrange(gruppoP_recoded) %>% pull()
 
 parties <- tribble(
 ~party, ~full_name, ~corresponding_party_in_the_speeches_dataset, ~legislatures, ~notes,
@@ -276,7 +276,7 @@ mutate(
            .fns = ~ mean(., na.rm = TRUE)))
 
 texts <- texts %>% 
-left_join(ilsd, by = c("gruppoP" = "PARTY_RECODED", "legislature" = "Legislature_RECODED", "year" = "Year"))
+left_join(ilsd, by = c("gruppoP_recoded" = "PARTY_RECODED", "legislature" = "Legislature_RECODED", "year" = "Year"))
 
 map_dfr(texts, ~ sum(is.na(.)) / length(.)) %>% 
 select(left_right, ratio_leftright, logit_left_right, classic_economic, ratio_economic, logit_economic, classic_gal_tan,
@@ -284,7 +284,7 @@ select(left_right, ratio_leftright, logit_left_right, classic_economic, ratio_ec
 
 texts <- texts %>% 
 arrange(year) %>% 
-group_by(gruppoP, legislature) %>% 
+group_by(gruppoP_recoded, legislature) %>% 
 fill_(fill_cols = c("left_right", "ratio_leftright", "logit_left_right", "classic_economic", "ratio_economic", 
                     "logit_economic", "classic_gal_tan", "ratio_gal_tan", "logit_gal_tan", "classic_economic_gal_tan", 
                     "ratio_economic_gal_tan", "logit_economic_gal_tan", "gal_tan_controllo"),
@@ -293,3 +293,5 @@ fill_(fill_cols = c("left_right", "ratio_leftright", "logit_left_right", "classi
 map_dfr(texts, ~ sum(is.na(.)) / length(.)) %>% 
 select(left_right, ratio_leftright, logit_left_right, classic_economic, ratio_economic, logit_economic, classic_gal_tan,
       ratio_gal_tan, logit_gal_tan, classic_economic_gal_tan, ratio_economic_gal_tan, logit_economic_gal_tan, gal_tan_controllo)
+
+saveRDS(texts, file = "data/joined_texts.rds")
