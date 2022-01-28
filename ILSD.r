@@ -295,6 +295,12 @@ map_dfr(joined_texts, ~ sum(is.na(.)) / length(.)) %>%
 select(left_right, ratio_leftright, logit_left_right, classic_economic, ratio_economic, logit_economic, classic_gal_tan,
       ratio_gal_tan, logit_gal_tan, classic_economic_gal_tan, ratio_economic_gal_tan, logit_economic_gal_tan, gal_tan_controllo)
 
+joined_texts <- joined_texts %>% 
+mutate(manual_scales = case_when(
+!is.na(left_right) ~ 0,
+is.na(left_right) & gruppoP_recoded != "MISTO" ~ 1,
+is.na(left_right) & gruppoP_recoded == "MISTO" ~ NA_real_))
+
 joined_texts %>% 
 filter(is.na(left_right)) %>% 
 distinct(gruppoP_recoded)
