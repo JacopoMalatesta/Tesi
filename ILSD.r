@@ -133,80 +133,14 @@ texts <- Texts %>% as_tibble()
 ilsd <- ilsd %>% 
 mutate(Legislature_RECODED = Legislature - 1)
 
-parties <- tribble(
-~party, ~full_name, ~gruppoP, ~gruppoP_recoded, ~legislatures, ~notes,
-"AD", "Alleanza Democratica", NA, NA, "12", "In coalition with 'Alleanza dei Progressisti (PROGR-F)'",
-"ALA", "Alleanza Liberalpopolare - Autonomie", NA, NA, "17", "Part of the Mixed Group; in 2016 it became part of 'NCI-SCPI-MAIE'",
-"ALP", "Alternativa Libera-Possibile", "SI-SEL-POS-LU", "SI-SEL-POS-LU", "17", "",
-"AN", "Alleanza Nazionale", "AN", "AN", "12-15", "",
-"API", "Alleanza per l'Italia", "UDCPTP", "UDCPTP", "16", "",
-"AUTSVP", "Sudtiroler Volkspartei", NA, NA, "18", "Part of 'Minoranze linguistiche (Gruppo misto)'",
-"BNL", "Blocco Nazionale della Libertà", NA, NA , "0", "Our dataset does not include the Constituent Assembly",
-"CCD", "Centro Cristiano Democratico", "CCD; CCD-CDU", "UDC", "12-14", "",
-"CD", "Centro Democratico", "DES-CD", "DES-CD", "17", "",
-"CDU","Cristiani Democratici Uniti", "CCD", "UDC" , "13", "",
-"CGM5SLN", "SintesiContrattoGovM5SLN", NA, NA, "18", "",
-"CR", "Conservatori e Riformisti", NA, NA, "17", "Part of FI, then it exited it and it was disbanded in 2017",
-"DC", "Democrazia Cristiana", "DC; DC-PPI", "DC", "0-11", "",
-"DEM", "I Democratici", "DEM-U", "DEM-U", "13", "",
-"DL", "Democrazia è Libertà/La Margherita", "MARGH-U", "MARGH-U", "14", "",
-"DP", "Democrazia Proletaria", "DP; DP-COM", "DP", "7-10", "",
-"DS", "Democratici di Sinistra", "DS-ULIVO; DS-U", "PD-ULIVO", "13-14", "",
-"FDI", "Fratelli d'Italia", "FDI-AN; FDI", "FDI", "17-18", "",
-"FELD", "Federalisti", "FLD", "FLD", "12", "",
-"FI", "Forza Italia", "F-ITA; FI-PDL; FI", "FI-PDL", "12-18", "",
-"FLI", "Futuro e Libertà per l’Italia", "FLPTP", "FLPTP", "16", "",
-"FUQ", "Fronte dell'Uomo Qualunque", NA, NA, "0", "Our dataset does not include the Constituent Assembly",
-"GAL", "Grandi Autonomie e Libertà", NA, NA, "17", "Can't be found in texts; in 2017 it became part of the UDC",
-"IDV", "Italia dei Valori", "IDV", "IDV", "15-16", "",
-"LEGA", "LEGA", "LNP", "LEGA", "16", "",
-"LEU", "Liberi e Uguali" , "LEU", "LEU" , "18", "",
-"LN", "Lega Nord", "LEGA; LEGA-N; LEGA-NORD-P; LNA; LNP; LNFP", "LEGA", "10-18", "",
-"LV", "Liga Veneta", NA, NA, "9", "Today it's part of Lega, but it is absent in texts for the 9th legislature",
-"M5S", "Movimento 5 stelle", "M5S", "M5S", "17-18", "",
-"MPA", "Movimento per le Autonomie", NA, NA, "16", "Part of the right-wing government coalition",
-"MSI", "Movimento Sociale Italiano", "MSI-DN; MSI", "MSI", "1-11", "",
-"NCD", "Nuovo Centro Destra", "AP-CPE-NCD-NCI", "AP-CPE-NCD-NCI", "17", "",
-"NPSI", "Nuovo Partito Socialista Italiano", NA, NA, "14", "texts includes DCA-NPSI. However, there's no match for the 14th legislature",
-"NS", "Noi Sud", "NOI SUD-LIBERTA\' ED AUTONOMIA/POPOLARI D\'ITALIA DOMANI-PID/MOVIMENTO DI RESPONSABILITA\' NAZIONALE-MRN/AZIONE POPOLARE/ALLEANZA DI CENTRO-ADC/INTESA POPOLARE", "NOI SUD-LIBERTA\' ED AUTONOMIA/POPOLARI D\'ITALIA DOMANI-PID/MOVIMENTO DI RESPONSABILITA\' NAZIONALE-MRN/AZIONE POPOLARE/ALLEANZA DI CENTRO-ADC/INTESA POPOLARE", "16", "",
-"PAT", "Patto Segni", NA, NA, "12", "Absent in texts",
-"PCI", "Partito Comunista Italiano", "PCI", "PCI", "0-10", "",
-"PD", "Partito Democratico", "PD-U; PD", "PD-ULIVO", "15-18", "",
-"PDCI", "Partito dei Comunisti Italiani", "COM/IT/", "COM/IT/", "13-15", "",
-"PDIUM", "Partito Democratico Italiano di Unità Monarchica", "PDIUM", "PDIUM", "3-5", "",
-"PDL", "Popolo Delle Libertà", "PDL; FI-PDL", "FI-PDL", "16-17", "",
-"PDS", "Partito Democratico della Sinistra", "PDS", "PDS", "10-13", "",
-"PI", "Per l'Italia", "DES-CD", "DES-CD", "17", "",
-"PLI", "Partito Liberale Italiano", "PLI", "PLI", "0-11", "",
-"PMP", "Partito Monarchico Popolare", "PMP", "PMP", "2-3", "",
-"PNM", "Partito Nazionale Monarchico", "PNM", "PNM", "1-3", "",
-"PPI", "Partito Popolare Italiano", "PPI", "PPI", "12-13", "",
-"PR", "Partito Radicale", "RADICALE", "RADICALE", "7-11", "",
-"PRI", "Partito Repubblicano Italiano", "PRI", "PRI", "0-11", "",
-"PSDI", "Partito Socialista Democratico Italiano", "PSI-PSDI; PSI", "PSDI", "0-11", "",
-"PSI", "Partito Socialista Italiano", "PSI-PSDI; PSI", "PSI", "0-12", "",
-"PSIUP", "Partito Socialista di Unità Proletaria", "PSIUP", "PSIUP", "4-5", "",
-"PSU", "Partito Socialista Unitario", NA, NA, "5", "The codebook refers to this party as 'Partito Socialista Unitario, but in fact it's probably 'Partito Socialista Unificato'. Anyway, it's not in texts. However, it could refer to both PSI and PSDI",
-"PT", "Popolo e Territorio", "NOI SUD-LIBERTA' ED AUTONOMIA/POPOLARI D'ITALIA DOMANI-PID/MOVIMENTO DI RESPONSABILITA' NAZIONALE-MRN/AZIONE POPOLARE/ALLEANZA DI CENTRO-ADC/INTESA POPOLARE", "NOI SUD-LIBERTA' ED AUTONOMIA/POPOLARI D'ITALIA DOMANI-PID/MOVIMENTO DI RESPONSABILITA' NAZIONALE-MRN/AZIONE POPOLARE/ALLEANZA DI CENTRO-ADC/INTESA POPOLARE", "16", "",
-"RC", "Rifondazione Comunista", "RC-PROGR; RC-SE; RC", "RC", "11-15", "",
-"RETE", "La Rete", "RETE", "RETE", "11-12", "",
-"RI", "Rinnovamento Italiano",  "RINN/IT", "RINN/IT", "13", "", 
-"RNP", "Rosa Nel Pugno", "SOCRAD-RNP", "SOCRAD-RNP", "15", "",
-"SC", "Scelta Civica", "NCI-SCPI-MAIE", "NCI-SCPI-MAIE", "17", "", 
-"SD", "Sinistra Democratica", "SDPSE", "SDPSE", "15", "Mostly MPs from DS who did not join PD. It unified several left-wing parties",
-"SDI", "Socialisti Democratici Italiani", NA, NA, "13-14", "It was the direct continuation of the Italian Socialists",
-"SEL", "Sinistra Ecologia e Libertà", "SI-SEL-POS-LU", "SI-SEL-POS-LU", "17", "",
-"UDC", "Unione dei Democratici Cristiani", "UNIONE DEI DEMOCRATICI CRISTIANI E DEI DEMOCRATICI DI CENTRO; CCD; CCD-CDU; UDCPTP", "UDC", "14-17", "",
-"UDEUR", "Unione Democratici per l'Europa", "UDEUR", "UDEUR", "13-15", "", 
-"UDR", "Unione Democratica per la Repubblica", "UDR", "UDR", "13", "",
-"ULIVO", "Ulivo", "PD-U", "PD-ULIVO", "15", "",
-"VER", "Verdi", "VERDE; VERDI", "VERDI", "10-15", "")
+ilsd <- ilsd %>% 
+mutate(Year = as.integer(str_extract(string = Edate, pattern = "\\d{4}")))
 
-writexl::write_xlsx(x = parties, "data/ilsd_parties.xlsx")
+texts %>% arrange(gruppoP) %>% distinct(gruppoP) %>% pull(gruppoP)
 
 texts <- texts %>% 
 mutate(gruppoP_recoded = case_when(
-gruppoP %in% c('CCD', 'CCD-CDU', 'UNIONE DEI DEMOCRATICI CRISTIANI E DEI DEMOCRATICI DI CENTRO', 'UDCPTP')  ~ 'UDC',
+gruppoP %in% c('CCD', 'CCD-CDU', 'UNIONE DEI DEMOCRATICI CRISTIANI E DEI DEMOCRATICI DI CENTRO', 'UDCPTP')  ~ 'UDC-CCD-CDU',
 gruppoP %in% c('COMUNISTA', 'COM/IT/') ~ 'PDCI',
 gruppoP == 'DC-PPI' ~ 'DC',
 gruppoP %in% c('DP-COM', 'PDUP-DP') ~ 'DP',
@@ -224,41 +158,32 @@ gruppoP %in% c('RC-PROGR', 'RC-SE') ~ 'RC',
 gruppoP == 'VERDE' ~ 'VERDI',
 TRUE ~ gruppoP))
 
-parties %>% 
-filter(is.na(gruppoP))
+ilsd %>% arrange(PARTY) %>% distinct(PARTY) %>% pull(PARTY)
 
 ilsd <- ilsd %>% 
 mutate(PARTY_RECODED = case_when(
 PARTY == "ALP" ~ 'SI-SEL-POS-LU',
 PARTY == "API" ~ "UDCPTP", 
-PARTY == "CCD" ~ 'UDC', 
-PARTY == "CD" ~ "DES-CD",
-PARTY == "CDU" ~ "UDC",
+PARTY %in% c("UDC", "CCD", "CDU") ~ "UDC-CCD-CDU",
+PARTY %in% c("CD", "PI") ~ "DES-CD", 
 PARTY == "DEM" ~ "DEM-U",
 PARTY == "DL" ~ "MARGH-U",
-PARTY == "DS" ~ "PD-ULIVO-DS",
+PARTY %in% c('PD', 'ULIVO', 'DS') ~ "PD-ULIVO-DS",
 PARTY == "FELD" ~ "FLD",
-PARTY == "FI" ~ "FI-PDL",
+PARTY %in% c("FI", "PDL") ~ "FI-PDL",
 PARTY == "FLI" ~ "FLPTP",
 PARTY == "LN" ~ "LEGA",
 PARTY == "NCD" ~ "AP-CPE-NCD-NCI",
 PARTY == "NS" ~ "NOI SUD-LIBERTA' ED AUTONOMIA/POPOLARI D'ITALIA DOMANI-PID/MOVIMENTO DI RESPONSABILITA' NAZIONALE-MRN/AZIONE POPOLARE/ALLEANZA DI CENTRO-ADC/INTESA POPOLARE",
-PARTY == "PD" ~ "PD-ULIVO-DS",
-PARTY == "PDL" ~ "FI-PDL",
-PARTY == "PI" ~ "DES-CD",
 PARTY == "PR" ~ "RADICALE",
 PARTY == "RI" ~ "RINN/IT",
 PARTY == "RNP" ~ "SOCRAD-RNP",
 PARTY == "SC" ~ "NCI-SCPI-MAIE",
 PARTY == "SD" ~ "SDPSE",
 PARTY == "SEL" ~ "SI-SEL-POS-LU",
-PARTY == "ULIVO" ~ "PD-ULIVO-DS",
 PARTY == "VER" ~ "VERDI",
 TRUE ~ PARTY
 )) 
-
-ilsd <- ilsd %>% 
-mutate(Year = as.integer(str_extract(string = Edate, pattern = "\\d{4}")))
 
 ilsd <- ilsd %>% 
 group_by(PARTY_RECODED, Legislature_RECODED, Year) %>% 
@@ -305,55 +230,42 @@ joined_texts %>%
 filter(is.na(left_right)) %>% 
 distinct(gruppoP_recoded)
 
-tribble(~legislatura, ~gruppoP_recoded, ~nome_completo, ~nota,
-        1, "MISTO", "", "",
-        1, "US", "Unità Socialista", "Nacque da una scissione del Partito Socialista Italiano",
-        1, "PSU", "Partito Socialista Unitario", "Nato da fusione tra Movimento Socialista Autonomista, l'Unione dei Socialisti e la corrente di sinistra uscita dal Partito Socialista dei Lavoratori Italiani",
-        2, "MISTO", "", "",
-        2, "PMP", "Partito Monarchico Popolare", "Valori nulli per 1953 e 1954",
-        3, "PDIUM", "Partito Democratico Italiano di Unità Monarchica", "Valori nulli per 1958 e 1959",
-        3, "MISTO", "", "",
-        4, "PSIUP", "Partito Socialista Italiano di Unità Proletaria", "Valori nulli per 1963",
-        4, "MISTO", "", "",
-        5, "MISTO", "", "",
-        5, "PSI", "Partito Socialista Italiano", "Valori nulli per il 1968",
-        5, "PSDI", "Partito Socialista Democratico Italiano", "Valori nulli per il 1968",
-        6, "MISTO", "", "",
-        7, "MISTO", "", "",
-        7, "CD-DN", "Democrazia Nazionale - Costituente di Destra", "nato nel febbraio 1977 dall'omonima corrente moderata del MSI-DN, e durato sino allo scioglimento nel 1979",
-        8, "MISTO", "", "", 
-        8, "PDUP", "Partito di Unità Proletaria per il Comunismo", "Coalizzato con DP",
-        9, "MISTO", "", "",
-        9, "SI", "Sinistra Indipendente", "candidati contigui al PCI a partire dal 1967-68 fino al suo scioglimento, ma per provenienza e idee erano esterni alla struttura del partito",
-        10, "SIN/IND/", "Sinistra Indipendente", "candidati contigui al PCI a partire dal 1967-68 fino al suo scioglimento, ma per provenienza e idee erano esterni alla struttura del partito",
-        10, "MISTO", "", "",
-        10, "PDS", "Partito Democratico della Sinistra", "Valori nulli per 1987, 1988, 1989, 1990",
-        11, "MISTO", "", "",
-        11, "UDC", "Centro Cristiano Democratico", "Fondato da esponenti moderati della DC",
-        12, "DEMO", "Patto dei Democratici", "lista elettorale costituitasi in vista delle elezioni regionali del 1995 da Alleanza Democratica, Patto Segni e Socialisti Italiani",
-        12, "MISTO", "", "",
-        12, "FLD", "Federalisti e Liberaldemocratici", "In texts è presente solo nel 1994, in ILSD solo nel 1995",
-        12, "LIFED", "Lega Italiana Federalista", "Il partito fu fondato il 13 febbraio 1995 da alcuni esponenti della Lega Nord",
-        13, "PD-ULIVO", "PDS - L'Ulivo / Democratici di Sinistra - L'Ulivo", "Valori nulli per 1996 e 1997. Usare valori PDS del 1996?",
-        13, "UDEUR", "Popolari UDEUR", "Nato nel 1999; valori nulli per 1996, 1997 e 1998",
-        13, "MISTO", "", "",
-        13, "UDR", "Unione Democratica per la Repubblica", "Fondata nel 1998 da elementi proveniente da CDU, CDR e PSDI; valori nulli per 1996 e 1997",
-        13, "DEM-U", "I Democratici - L'Ulivo", "Valori nulli per 1996, 1997 e 1998",
-        14, "MISTO", "", "",
-        15, "SDPSE", "Sinistra Democratica Per il Socialismo Europeo", "Valori nulli per 2006 e 2007",
-        15, "MISTO", "", "",
-        15, "DCA-NPSI", "Democrazia Cristiana per le Autonomie-Nuovo Partito Socialista Italiano", "Assente in ILSD per ragioni non identificate",
-        16, "FLPTP", "Futuro e Libertà Per il Terzo Polo", "In ILSD c'è Unione di Centro Per il Terzo Polo",
-        16, "NOI SUD-LIBERTA' ED AUTONOMIA/POPOLARI D'ITALIA DOMANI-PID/MOVIMENTO DI RESPONSABILITA' NAZIONALE-MRN/AZIONE POPOLARE/ALLEANZA DI CENTRO-ADC/INTESA POPOLARE", "", "Valori nulli per 2008 e 2009",
-        16, "MISTO", "", "",
-        17, "MDP-LU", "ARTICOLO 1-MOVIMENTO DEMOCRATICO E PROGRESSISTA", "Assente in ILSD; ci sono però Alternativa Libera-Possibile e SEL",
-        17, "MISTO", "", "",
-        17, "CI", "Civici e Innovatori", "fino al 2016 noto come Scelta Civica per l'Italia",
-        18, "MISTO", "", "",      
-        18, "IV", "", "Assente in ILSD"
+parties <- tribble(~legislatura, ~missing_party, ~replacement_party, ~nota,
+        1, "US", "Mean of PSDI and PSI values", 'Unità Socialista" was born out of an agreement between PSDI (then "Partito Socialista dei Lavoratori Italiani") and "Unione dei Socialisti". The latter splintered from PSI.',
+        1, "PSU", "Mean of PSDI and PSI values", '"Partito Socialista Unitario" was founded in 1949 as a result of the merging of three parties: Movimento Socialista Autonomista, Unione dei Socialisti and PSDI (then "Partito Socialista dei Lavoratori Italiani"). Movimento Socialista Autonomista is not available in ILSD.',
+        2, "PMP", "PNM", 'It was founded in 1954 by a split from Partito Nazionale Monarchico',
+        3, "PDIUM", "Mean of PNM and PMP values", "It was founded in 1959 as a result of the merging between Partito Nazionale Monarchico (PNM) and Partito Monarchico Popolare (PMP)",
+        4, "PSIUP", "PSI", "It was founded in 1964 by a split from Partito Socialista Italiano.",
+        5, "PSI", "PSU", "In 1968 PSI was part of Partito Socialista Unificato",
+        5, "PSDI", "PSU", "In 1968 PSI was part of Partito Socialista Unificato",
+        7, "CD-DN", "MSI", "It was a spin-off of Movimento Sociale Italiano",
+        8, "PDUP", "DP", 'It was founded in 1974 with the merge between "Partito di Unità Proletaria" and "Il Manifesto" group. Neither of those two parties are in ILSD in the 8th legislature, so I will fill the null values with the values pertaining to Democrazia Proletaria (DP), which PdUP was in coalition with.',
+        9, "SI", "PCI", "It was created by the PCI",
+        10, "SIN/IND/", "PCI", "It was created by the PCI",
+        10, "PDS", "PCI", "It was founded in February 1991 as the post-communist evolution of PCI",
+        11, "UDC-CCD-CDU", "DC", "It was founded in January 1994 by members of Democrazia Cristiana",
+        12, "DEMO", "Mean of PSI, PAT, AD values", 'Il Patto dei Democratici consisted of Socialisti Italiani (PSI), Patto Segni (PAT) and Alleanza Democratica (AD)',
+        12, "PROGR-F", "PDS", "",           
+        12, "FLD", "Mean of LEGA, PAT, FI-PDL values", "Members of FLD previously belonged to Lega Nord, Patto Segni, Forza Italia and Lega d'Azione Meridionale",
+        12, "LIFED", "LEGA", "It was founded in 1995 by a split from Lega Nord.",
+        13, "PD-ULIVO-DS", "PDS", "",
+        13, "UDR", "UDC-CCD-CDU", "UDR was founded as a federation that included Cristiani Democratici Uniti, Cristiano Democratici per la Repubblica and Socialdemocrazia Liberale Europea. Both CDU and CDR were part of CCD. SOLE is not included in ILSD. The null values for UDR will thus be filled with values for CCD.",
+        13, "UDEUR", "CCD and UDEUR", "UDEUR was founded in 1999 after UDR was disbanded. The null values in 1996 and 1997 will be replaced with values from CCD (the same values used to replace the null in UDR), while the null values in 1998 will be replaced with values from UDR.",
+        13, "PDCI", "RC", "We have null values for PDCI in 1996 and 1997. This party was founded by a split from Rifondazione Comunista",
+        13, "DEM-U", "PDS and PD-ULIVO-DS", "It was founded in 1999 by members of the following five parties: ULIVO, Italia dei Valori, la Rete, Movimento per l'Ulivo and Unione Democratica. None of these parties are present in ILSD with the exception of L'Ulivo/PDS",
+        15, "SDPSE", "PD-ULIVO-DS", "SDPSE was founded in 2007 by splinters from DS/ULIVO.",
+        15, "DCA-NPSI", "UDC-CCD-CDU", "Originally affiliated with UDC.",
+        16, "FLPTP", "FI-PDL", "It was founded in 2010 by a split from Popolo delle Libertà",
+        16, "NOI SUD-LIBERTA' ED AUTONOMIA/POPOLARI D'ITALIA DOMANI-PID/MOVIMENTO DI RESPONSABILITA' NAZIONALE-MRN/AZIONE POPOLARE/ALLEANZA DI CENTRO-ADC/INTESA POPOLARE", "MPA", "It was founded in 2010 by a split from Movimento per le auotonomie",
+        17, "MDP-LU", "Mean of PD-ULIVO-DS and SI-SEL-POS-LU values", "It was founded in 2017 by a split from PD and a split from SI-SEL-POS-LU",
+        17, "CI", "NCI-SCPI-MAIE", "It was originally named Scelta Civica per l'Italia. In 2016 it changed its name to Civici e Innovatori",
+        18, "IV", "PD-ULIVO-DS", "It was founded by former PD secretary Matteo Renzi. It mostly consists of former PD members."
         
-       ) %>% 
-filter(gruppoP_recoded != "MISTO")
+       )
+
+writexl::write_xlsx(parties, "data/parties.xlsx")
+
+parties
 
 ilsd %>% 
 filter(Legislature_RECODED == 1 & (PARTY_RECODED == "PSI" | PARTY_RECODED == "PSDI")) %>% 
@@ -996,56 +908,56 @@ select(Legislature_RECODED, PARTY_RECODED, Year, left_right, ratio_leftright, lo
 
 joined_texts <- joined_texts %>% 
 mutate(left_right = case_when(
-gruppoP_recoded == "UDC" & legislature == 11 & year == 1992 ~ 11.36,
-gruppoP_recoded == "UDC" & legislature == 11 & year == 1993 ~ 3.98,
+gruppoP_recoded == "UDC-CCD-CDU" & legislature == 11 & year == 1992 ~ 11.36,
+gruppoP_recoded == "UDC-CCD-CDU" & legislature == 11 & year == 1993 ~ 3.98,
 TRUE ~ left_right),
       ratio_leftright = case_when(
-gruppoP_recoded == "UDC" & legislature == 11 & year == 1992 ~ 0.4344168,
-gruppoP_recoded == "UDC" & legislature == 11 & year == 1993 ~ 0.1529593,
+gruppoP_recoded == "UDC-CCD-CDU" & legislature == 11 & year == 1992 ~ 0.4344168,
+gruppoP_recoded == "UDC-CCD-CDU" & legislature == 11 & year == 1993 ~ 0.1529593,
 TRUE ~ ratio_leftright),
        logit_left_right = case_when(
-gruppoP_recoded == "UDC" & legislature == 11 & year == 1992 ~ 0.8915411,
-gruppoP_recoded == "UDC" & legislature == 11 & year == 1993 ~ 0.2967554,
+gruppoP_recoded == "UDC-CCD-CDU" & legislature == 11 & year == 1992 ~ 0.8915411,
+gruppoP_recoded == "UDC-CCD-CDU" & legislature == 11 & year == 1993 ~ 0.2967554,
 TRUE ~ logit_left_right),
        classic_economic = case_when(
-gruppoP_recoded == "UDC" & legislature == 11 & year == 1992 ~ -1.48,
-gruppoP_recoded == "UDC" & legislature == 11 & year == 1993 ~ -3.50,
+gruppoP_recoded == "UDC-CCD-CDU" & legislature == 11 & year == 1992 ~ -1.48,
+gruppoP_recoded == "UDC-CCD-CDU" & legislature == 11 & year == 1993 ~ -3.50,
 TRUE ~ classic_economic),
        ratio_economic = case_when(
-gruppoP_recoded == "UDC" & legislature == 11 & year == 1992 ~ -0.3583535,
-gruppoP_recoded == "UDC" & legislature == 11 & year == 1993 ~ -0.4768392,
+gruppoP_recoded == "UDC-CCD-CDU" & legislature == 11 & year == 1992 ~ -0.3583535,
+gruppoP_recoded == "UDC-CCD-CDU" & legislature == 11 & year == 1993 ~ -0.4768392,
 TRUE ~ ratio_economic),
        logit_economic = case_when(
-gruppoP_recoded == "UDC" & legislature == 11 & year == 1992 ~ -0.5938565, 
-gruppoP_recoded == "UDC" & legislature == 11 & year == 1993 ~ -0.8945689,
+gruppoP_recoded == "UDC-CCD-CDU" & legislature == 11 & year == 1992 ~ -0.5938565, 
+gruppoP_recoded == "UDC-CCD-CDU" & legislature == 11 & year == 1993 ~ -0.8945689,
 TRUE ~ logit_economic),
        classic_gal_tan = case_when(
-gruppoP_recoded == "UDC" & legislature == 11 & year == 1992 ~ -5.50,
-gruppoP_recoded == "UDC" & legislature == 11 & year == 1993 ~ -0.93,
+gruppoP_recoded == "UDC-CCD-CDU" & legislature == 11 & year == 1992 ~ -5.50,
+gruppoP_recoded == "UDC-CCD-CDU" & legislature == 11 & year == 1993 ~ -0.93,
 TRUE ~ classic_gal_tan),
        ratio_gal_tan = case_when(
-gruppoP_recoded == "UDC" & legislature == 11 & year == 1992 ~ -1,
-gruppoP_recoded == "UDC" & legislature == 11 & year == 1993 ~ -1,
+gruppoP_recoded == "UDC-CCD-CDU" & legislature == 11 & year == 1992 ~ -1,
+gruppoP_recoded == "UDC-CCD-CDU" & legislature == 11 & year == 1993 ~ -1,
 TRUE ~ ratio_gal_tan),
        logit_gal_tan = case_when(
-gruppoP_recoded == "UDC" & legislature == 11 & year == 1992 ~ -2.484907,
-gruppoP_recoded == "UDC" & legislature == 11 & year == 1993 ~ -1.050822,
+gruppoP_recoded == "UDC-CCD-CDU" & legislature == 11 & year == 1992 ~ -2.484907,
+gruppoP_recoded == "UDC-CCD-CDU" & legislature == 11 & year == 1993 ~ -1.050822,
 TRUE ~ logit_gal_tan),
        classic_economic_gal_tan = case_when(
-gruppoP_recoded == "UDC" & legislature == 11 & year == 1992 ~ -5.50,
-gruppoP_recoded == "UDC" & legislature == 11 & year == 1993 ~ -0.93,
+gruppoP_recoded == "UDC-CCD-CDU" & legislature == 11 & year == 1992 ~ -5.50,
+gruppoP_recoded == "UDC-CCD-CDU" & legislature == 11 & year == 1993 ~ -0.93,
 TRUE ~ classic_economic_gal_tan),
        ratio_economic_gal_tan = case_when(
-gruppoP_recoded == "UDC" & legislature == 11 & year == 1992 ~ -1,
-gruppoP_recoded == "UDC" & legislature == 11 & year == 1993 ~ -1,
+gruppoP_recoded == "UDC-CCD-CDU" & legislature == 11 & year == 1992 ~ -1,
+gruppoP_recoded == "UDC-CCD-CDU" & legislature == 11 & year == 1993 ~ -1,
 TRUE ~ ratio_economic_gal_tan),
        logit_economic_gal_tan = case_when(
-gruppoP_recoded == "UDC" & legislature == 11 & year == 1992 ~ -2.484907,
-gruppoP_recoded == "UDC" & legislature == 11 & year == 1993 ~ -1.050822,
+gruppoP_recoded == "UDC-CCD-CDU" & legislature == 11 & year == 1992 ~ -2.484907,
+gruppoP_recoded == "UDC-CCD-CDU" & legislature == 11 & year == 1993 ~ -1.050822,
 TRUE ~ logit_economic_gal_tan))
 
 ilsd %>% 
-filter(Legislature_RECODED == 12 & PARTY %in% c('PSI', 'PAT', 'AD')) %>% 
+filter(Legislature_RECODED == 12 & PARTY_RECODED %in% c('PSI', 'PAT', 'AD')) %>% 
 group_by(Year) %>% 
 summarize(left_right = mean(left_right),
           ratio_leftright = mean(logit_left_right),
@@ -1164,7 +1076,7 @@ gruppoP_recoded == "FLD" & legislature == 12 & year == 1994 ~ -2.284952,
 TRUE ~ logit_economic_gal_tan))
 
 ilsd %>% 
-filter(Legislature_RECODED == 12 & PARTY == "PDS") %>% 
+filter(Legislature_RECODED == 12 & PARTY_RECODED == "PDS") %>% 
 select(Legislature_RECODED, PARTY_RECODED, Year, left_right, ratio_leftright, logit_left_right, classic_economic, 
        ratio_economic, logit_economic, classic_gal_tan, ratio_gal_tan, logit_gal_tan, classic_economic_gal_tan, 
        ratio_economic_gal_tan, logit_economic_gal_tan)
@@ -1316,7 +1228,7 @@ gruppoP_recoded == "PD-ULIVO-DS" & legislature == 13 & year == 1996 ~ -1.877526,
 TRUE ~ logit_economic_gal_tan))
 
 ilsd %>% 
-filter(Legislature_RECODED == 13 & Year == 1996 & PARTY == "CCD") %>% 
+filter(Legislature_RECODED == 13 & Year == 1996 & PARTY_RECODED == "UDC-CCD-CDU") %>% 
 select(Legislature_RECODED, PARTY_RECODED, Year, left_right, ratio_leftright, logit_left_right, classic_economic, 
        ratio_economic, logit_economic, classic_gal_tan, ratio_gal_tan, logit_gal_tan, classic_economic_gal_tan, 
        ratio_economic_gal_tan, logit_economic_gal_tan)
@@ -1360,7 +1272,7 @@ gruppoP_recoded %in% c('UDR', 'UDEUR') & legislature == 13 & year == 1996 ~ -1.9
 TRUE ~ logit_economic_gal_tan))
 
 ilsd %>% 
-filter(Legislature_RECODED == 13 & Year == 1998 & PARTY == "UDR") %>% 
+filter(Legislature_RECODED == 13 & Year == 1998 & PARTY_RECODED == "UDR") %>% 
 select(Legislature_RECODED, PARTY_RECODED, Year, left_right, ratio_leftright, logit_left_right, classic_economic, 
        ratio_economic, logit_economic, classic_gal_tan, ratio_gal_tan, logit_gal_tan, classic_economic_gal_tan, 
        ratio_economic_gal_tan, logit_economic_gal_tan)
@@ -1404,7 +1316,7 @@ gruppoP_recoded == 'UDEUR' & legislature == 13 & year == 1998 ~ -2.438876,
 TRUE ~ logit_economic_gal_tan))
 
 ilsd %>% 
-filter(Legislature_RECODED == 13 & Year == 1996 & PARTY == "RC") %>% 
+filter(Legislature_RECODED == 13 & Year == 1996 & PARTY_RECODED == "RC") %>% 
 select(Legislature_RECODED, PARTY_RECODED, Year, left_right, ratio_leftright, logit_left_right, classic_economic, 
        ratio_economic, logit_economic, classic_gal_tan, ratio_gal_tan, logit_gal_tan, classic_economic_gal_tan, 
        ratio_economic_gal_tan, logit_economic_gal_tan)
@@ -1448,7 +1360,7 @@ gruppoP_recoded == 'PDCI' & legislature == 13 & year == 1996 ~ -0.3794896,
 TRUE ~ logit_economic_gal_tan))
 
 ilsd %>% 
-filter(Legislature_RECODED == 13 & Year == 1996 & PARTY == 'PDS') %>% 
+filter(Legislature_RECODED == 13 & Year == 1996 & PARTY_RECODED == 'PDS') %>% 
 select(Legislature_RECODED, PARTY_RECODED, Year, left_right, ratio_leftright, logit_left_right, classic_economic, 
        ratio_economic, logit_economic, classic_gal_tan, ratio_gal_tan, logit_gal_tan, classic_economic_gal_tan, 
        ratio_economic_gal_tan, logit_economic_gal_tan)
@@ -1492,7 +1404,7 @@ gruppoP_recoded == 'DEM-U' & legislature == 13 & year == 1996 ~ -1.877526,
 TRUE ~ logit_economic_gal_tan))
 
 ilsd %>% 
-filter(Legislature_RECODED == 13 & Year == 1998 & PARTY == 'DS') %>% 
+filter(Legislature_RECODED == 13 & Year == 1998 & PARTY_RECODED == 'PD-ULIVO-DS') %>% 
 select(Legislature_RECODED, PARTY_RECODED, Year, left_right, ratio_leftright, logit_left_right, classic_economic, 
        ratio_economic, logit_economic, classic_gal_tan, ratio_gal_tan, logit_gal_tan, classic_economic_gal_tan, 
        ratio_economic_gal_tan, logit_economic_gal_tan)
@@ -1536,7 +1448,7 @@ gruppoP_recoded == 'DEM-U' & legislature == 13 & year == 1998 ~ -2.401466,
 TRUE ~ logit_economic_gal_tan))
 
 ilsd %>% 
-filter(Legislature_RECODED == 15 & Year == 2006 & PARTY == "ULIVO") %>% 
+filter(Legislature_RECODED == 15 & Year == 2006 & PARTY_RECODED == "PD-ULIVO-DS") %>% 
 select(Legislature_RECODED, PARTY_RECODED, Year, left_right, ratio_leftright, logit_left_right, classic_economic, 
        ratio_economic, logit_economic, classic_gal_tan, ratio_gal_tan, logit_gal_tan, classic_economic_gal_tan, 
        ratio_economic_gal_tan, logit_economic_gal_tan)
@@ -1580,7 +1492,7 @@ gruppoP_recoded == 'SDPSE' & legislature == 15 & year == 2006 ~ -3.203559,
 TRUE ~ logit_economic_gal_tan))
 
 ilsd %>% 
-filter(Legislature_RECODED == 15 & PARTY == "UDC") %>% 
+filter(Legislature_RECODED == 15 & PARTY_RECODED == "UDC-CCD-CDU") %>% 
 select(Legislature_RECODED, PARTY_RECODED, Year, left_right, ratio_leftright, logit_left_right, classic_economic, 
        ratio_economic, logit_economic, classic_gal_tan, ratio_gal_tan, logit_gal_tan, classic_economic_gal_tan, 
        ratio_economic_gal_tan, logit_economic_gal_tan)
@@ -1678,7 +1590,7 @@ gruppoP_recoded == 'FLPTP' & legislature == 16 & year == 2008 ~ -0.8754687,
 TRUE ~ logit_economic_gal_tan))
 
 ilsd %>% 
-filter(Legislature_RECODED == 16 & Year == 2008 & PARTY == "MPA") %>% 
+filter(Legislature_RECODED == 16 & Year == 2008 & PARTY_RECODED == "MPA") %>% 
 select(Legislature_RECODED, PARTY_RECODED, Year, left_right, ratio_leftright, logit_left_right, classic_economic, 
        ratio_economic, logit_economic, classic_gal_tan, ratio_gal_tan, logit_gal_tan, classic_economic_gal_tan, 
        ratio_economic_gal_tan, logit_economic_gal_tan)
@@ -1722,7 +1634,7 @@ gruppoP_recoded == "NOI SUD-LIBERTA' ED AUTONOMIA/POPOLARI D'ITALIA DOMANI-PID/M
 TRUE ~ logit_economic_gal_tan))
 
 ilsd %>% 
-filter(Legislature_RECODED == 17 & PARTY %in% c('PD', 'SEL')) %>% 
+filter(Legislature_RECODED == 17 & PARTY_RECODED %in% c('PD-ULIVO-DS', 'SI-SEL-POS-LU')) %>% 
 group_by(Year) %>% 
 summarize(left_right = mean(left_right),
           ratio_leftright = mean(logit_left_right),
@@ -1800,7 +1712,7 @@ gruppoP_recoded == 'MDP-LU' & legislature == 17 & year == 2016 ~ -0.08108178,
 TRUE ~ logit_economic_gal_tan)) 
 
 ilsd %>% 
-filter(Legislature_RECODED == 17 & PARTY == "SC") %>% 
+filter(Legislature_RECODED == 17 & PARTY_RECODED == "NCI-SCPI-MAIE") %>% 
 select(Legislature_RECODED, PARTY_RECODED, Year, left_right, ratio_leftright, logit_left_right, classic_economic, 
        ratio_economic, logit_economic, classic_gal_tan, ratio_gal_tan, logit_gal_tan, classic_economic_gal_tan, 
        ratio_economic_gal_tan, logit_economic_gal_tan)
@@ -1869,7 +1781,7 @@ gruppoP_recoded == 'CI' & legislature == 17 & year == 2016 ~ 1.683350,
 TRUE ~ logit_economic_gal_tan)) 
 
 ilsd %>% 
-filter(Legislature_RECODED == 18 & PARTY == "PD") %>% 
+filter(Legislature_RECODED == 18 & PARTY_RECODED == "PD-ULIVO-DS") %>% 
 select(Legislature_RECODED, PARTY_RECODED, Year, left_right, ratio_leftright, logit_left_right, classic_economic, 
        ratio_economic, logit_economic, classic_gal_tan, ratio_gal_tan, logit_gal_tan, classic_economic_gal_tan, 
        ratio_economic_gal_tan, logit_economic_gal_tan)
