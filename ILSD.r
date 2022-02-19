@@ -155,6 +155,7 @@ gruppoP == 'PDI' ~ 'PDIUM',
 gruppoP == 'POP-UDEUR' ~ 'UDEUR',
 gruppoP == 'PSI-PSDI' ~ "PSI",
 gruppoP %in% c('RC-PROGR', 'RC-SE') ~ 'RC',
+gruppoP == 'SIN/IND/' ~ 'SI',
 gruppoP == 'VERDE' ~ 'VERDI',
 TRUE ~ gruppoP))
 
@@ -219,6 +220,21 @@ fill_(fill_cols = c("left_right", "ratio_leftright", "logit_left_right", "classi
 map_dfr(joined_texts, ~ sum(is.na(.)) / length(.)) %>% 
 select(left_right, ratio_leftright, logit_left_right, classic_economic, ratio_economic, logit_economic, classic_gal_tan,
       ratio_gal_tan, logit_gal_tan, classic_economic_gal_tan, ratio_economic_gal_tan, logit_economic_gal_tan, gal_tan_controllo)
+
+joined_texts <- joined_texts %>% 
+mutate(date = lubridate::ymd_hms(date))
+
+joined_texts <- joined_texts %>% 
+arrange(date) %>% 
+group_by(legislature, gruppoP_recoded) %>% 
+fill_(fill_cols = c("Gov_memb", "External_sup"),
+      .direction = "down")
+
+joined_texts <- joined_texts %>% 
+arrange(date) %>% 
+group_by(legislature) %>% 
+fill_(fill_cols = "government_id",
+      .direction = "down")
 
 joined_texts <- joined_texts %>% 
 mutate(manual_scales = case_when(
@@ -771,64 +787,64 @@ select(Legislature_RECODED, PARTY_RECODED, Year, left_right, ratio_leftright, lo
 
 joined_texts <- joined_texts %>% 
 mutate(left_right = case_when(
-gruppoP_recoded == "SIN/IND/" & legislature == 10 & year == 1987 ~ -32.973785,
-gruppoP_recoded == "SIN/IND/" & legislature == 10 & year == 1988 ~ -7.032656,
-gruppoP_recoded == "SIN/IND/" & legislature == 10 & year == 1989 ~ -3.702825,
+gruppoP_recoded == "SI" & legislature == 10 & year == 1987 ~ -32.973785,
+gruppoP_recoded == "SI" & legislature == 10 & year == 1988 ~ -7.032656,
+gruppoP_recoded == "SI" & legislature == 10 & year == 1989 ~ -3.702825,
 TRUE ~ left_right),
       ratio_leftright = case_when(
-gruppoP_recoded == "SIN/IND/" & legislature == 10 & year == 1987 ~ -0.7027305,
-gruppoP_recoded == "SIN/IND/" & legislature == 10 & year == 1988 ~ -0.2811525,
-gruppoP_recoded == "SIN/IND/" & legislature == 10 & year == 1989 ~ -0.1540813,
+gruppoP_recoded == "SI" & legislature == 10 & year == 1987 ~ -0.7027305,
+gruppoP_recoded == "SI" & legislature == 10 & year == 1988 ~ -0.2811525,
+gruppoP_recoded == "SI" & legislature == 10 & year == 1989 ~ -0.1540813,
 TRUE ~ ratio_leftright),
       logit_left_right = case_when(
-gruppoP_recoded == "SIN/IND/" & legislature == 10 & year == 1987 ~ -1.6885495,
-gruppoP_recoded == "SIN/IND/" & legislature == 10 & year == 1988 ~ -0.5544711,
-gruppoP_recoded == "SIN/IND/" & legislature == 10 & year == 1989 ~ -0.2980383,
+gruppoP_recoded == "SI" & legislature == 10 & year == 1987 ~ -1.6885495,
+gruppoP_recoded == "SI" & legislature == 10 & year == 1988 ~ -0.5544711,
+gruppoP_recoded == "SI" & legislature == 10 & year == 1989 ~ -0.2980383,
 TRUE ~ logit_left_right),
       classic_economic = case_when(
-gruppoP_recoded == "SIN/IND/" & legislature == 10 & year == 1987 ~ -18.069944,
-gruppoP_recoded == "SIN/IND/" & legislature == 10 & year == 1988 ~ -3.094237,
-gruppoP_recoded == "SIN/IND/" & legislature == 10 & year == 1989 ~ -7.299153,
+gruppoP_recoded == "SI" & legislature == 10 & year == 1987 ~ -18.069944,
+gruppoP_recoded == "SI" & legislature == 10 & year == 1988 ~ -3.094237,
+gruppoP_recoded == "SI" & legislature == 10 & year == 1989 ~ -7.299153,
 TRUE ~ classic_economic),
       ratio_economic = case_when(
-gruppoP_recoded == "SIN/IND/" & legislature == 10 & year == 1987 ~ -0.8357102,
-gruppoP_recoded == "SIN/IND/" & legislature == 10 & year == 1988 ~ -0.9084395,
-gruppoP_recoded == "SIN/IND/" & legislature == 10 & year == 1989 ~ -0.8076959,
+gruppoP_recoded == "SI" & legislature == 10 & year == 1987 ~ -0.8357102,
+gruppoP_recoded == "SI" & legislature == 10 & year == 1988 ~ -0.9084395,
+gruppoP_recoded == "SI" & legislature == 10 & year == 1989 ~ -0.8076959,
 TRUE ~ ratio_economic),
       logit_economic = case_when(
-gruppoP_recoded == "SIN/IND/" & legislature == 10 & year == 1987 ~ -2.190400,
-gruppoP_recoded == "SIN/IND/" & legislature == 10 & year == 1988 ~ -1.743499,
-gruppoP_recoded == "SIN/IND/" & legislature == 10 & year == 1989 ~ -1.845620,
+gruppoP_recoded == "SI" & legislature == 10 & year == 1987 ~ -2.190400,
+gruppoP_recoded == "SI" & legislature == 10 & year == 1988 ~ -1.743499,
+gruppoP_recoded == "SI" & legislature == 10 & year == 1989 ~ -1.845620,
 TRUE ~ logit_economic),
       classic_gal_tan = case_when(
-gruppoP_recoded == "SIN/IND/" & legislature == 10 & year == 1987 ~ -0.1333333,
-gruppoP_recoded == "SIN/IND/" & legislature == 10 & year == 1988 ~ -0.1932203,
-gruppoP_recoded == "SIN/IND/" & legislature == 10 & year == 1989 ~ -2.0819774,
+gruppoP_recoded == "SI" & legislature == 10 & year == 1987 ~ -0.1333333,
+gruppoP_recoded == "SI" & legislature == 10 & year == 1988 ~ -0.1932203,
+gruppoP_recoded == "SI" & legislature == 10 & year == 1989 ~ -2.0819774,
 TRUE ~ classic_gal_tan),
       ratio_gal_tan = case_when(
-gruppoP_recoded == "SIN/IND/" & legislature == 10 & year == 1987 ~ -1,
-gruppoP_recoded == "SIN/IND/" & legislature == 10 & year == 1988 ~ -1,
-gruppoP_recoded == "SIN/IND/" & legislature == 10 & year == 1989 ~ -1,
+gruppoP_recoded == "SI" & legislature == 10 & year == 1987 ~ -1,
+gruppoP_recoded == "SI" & legislature == 10 & year == 1988 ~ -1,
+gruppoP_recoded == "SI" & legislature == 10 & year == 1989 ~ -1,
 TRUE ~ ratio_gal_tan),
       logit_gal_tan = case_when(
-gruppoP_recoded == "SIN/IND/" & legislature == 10 & year == 1987 ~ -0.2363888,
-gruppoP_recoded == "SIN/IND/" & legislature == 10 & year == 1988 ~ -0.3267398,
-gruppoP_recoded == "SIN/IND/" & legislature == 10 & year == 1989 ~ -1.6417027,
+gruppoP_recoded == "SI" & legislature == 10 & year == 1987 ~ -0.2363888,
+gruppoP_recoded == "SI" & legislature == 10 & year == 1988 ~ -0.3267398,
+gruppoP_recoded == "SI" & legislature == 10 & year == 1989 ~ -1.6417027,
 TRUE ~ logit_gal_tan),
        classic_economic_gal_tan = case_when(
-gruppoP_recoded == "SIN/IND/" & legislature == 10 & year == 1987 ~ -0.1333333,
-gruppoP_recoded == "SIN/IND/" & legislature == 10 & year == 1988 ~ -0.1932203,
-gruppoP_recoded == "SIN/IND/" & legislature == 10 & year == 1989 ~ -2.0469491,
+gruppoP_recoded == "SI" & legislature == 10 & year == 1987 ~ -0.1333333,
+gruppoP_recoded == "SI" & legislature == 10 & year == 1988 ~ -0.1932203,
+gruppoP_recoded == "SI" & legislature == 10 & year == 1989 ~ -2.0469491,
 TRUE ~ classic_economic_gal_tan),
        ratio_economic_gal_tan = case_when(
-gruppoP_recoded == "SIN/IND/" & legislature == 10 & year == 1987 ~ -1.0000000,
-gruppoP_recoded == "SIN/IND/" & legislature == 10 & year == 1988 ~ -1.0000000,
-gruppoP_recoded == "SIN/IND/" & legislature == 10 & year == 1989 ~ -0.9669077,
+gruppoP_recoded == "SI" & legislature == 10 & year == 1987 ~ -1.0000000,
+gruppoP_recoded == "SI" & legislature == 10 & year == 1988 ~ -1.0000000,
+gruppoP_recoded == "SI" & legislature == 10 & year == 1989 ~ -0.9669077,
 TRUE ~ ratio_economic_gal_tan),
        logit_economic_gal_tan = case_when(
-gruppoP_recoded == "SIN/IND/" & legislature == 10 & year == 1987 ~ -0.2363888,
-gruppoP_recoded == "SIN/IND/" & legislature == 10 & year == 1988 ~ -0.3267398,
-gruppoP_recoded == "SIN/IND/" & legislature == 10 & year == 1989 ~ -1.5739913,
+gruppoP_recoded == "SI" & legislature == 10 & year == 1987 ~ -0.2363888,
+gruppoP_recoded == "SI" & legislature == 10 & year == 1988 ~ -0.3267398,
+gruppoP_recoded == "SI" & legislature == 10 & year == 1989 ~ -1.5739913,
 TRUE ~ logit_economic_gal_tan)) 
 
 ilsd %>% 
@@ -1839,5 +1855,154 @@ select(left_right, ratio_leftright, logit_left_right, classic_economic, ratio_ec
 joined_texts %>% 
 filter(is.na(left_right)) %>% 
 distinct(legislature)
+
+joined_texts %>% 
+filter(is.na(Gov_memb) & gruppoP_recoded != "MISTO") %>% 
+distinct(legislature, government_id, gruppoP_recoded)
+
+joined_texts %>% 
+filter(is.na(External_sup) & gruppoP_recoded != "MISTO") %>% 
+distinct(legislature, government_id, gruppoP_recoded)
+
+joined_texts <- joined_texts %>%
+mutate(
+across(.cols = c("Gov_memb", "External_sup"),
+       .fns = ~ if_else(legislature == 1 & gruppoP_recoded %in% c('US', 'PSU'), 0, .)))
+
+joined_texts <- joined_texts %>% 
+mutate(Gov_memb = if_else(legislature == 2 & gruppoP_recoded == "PMP", 0, Gov_memb))
+
+joined_texts <- joined_texts %>% 
+mutate(External_sup = if_else(legislature == 2 & gruppoP_recoded == "PMP" & is.na(External_sup), 0, External_sup))
+
+joined_texts <- joined_texts %>%
+mutate(
+across(.cols = c("Gov_memb", "External_sup"),
+       .fns = ~ if_else(legislature == 3 & gruppoP_recoded == "PDIUM", 0, .)))
+
+joined_texts <- joined_texts %>%
+mutate(
+across(.cols = c("Gov_memb", "External_sup"),
+       .fns = ~ if_else(legislature == 4 & gruppoP_recoded == "PSIUP", 0, .)))
+
+joined_texts <- joined_texts %>% 
+mutate(
+across(.cols = c("Gov_memb", "External_sup"),
+       .fns = ~ if_else(legislature == 5 & gruppoP_recoded %in% c('PSI', 'PSDI') & government_id == 25, 0, .)))
+
+joined_texts <- joined_texts %>%
+mutate(
+across(.cols = c("Gov_memb", "External_sup"),
+       .fns = ~ if_else(legislature == 7 & gruppoP_recoded == "CD-DN", 0, .)))
+
+joined_texts <- joined_texts %>%
+mutate(
+across(.cols = c("Gov_memb", "External_sup"),
+       .fns = ~ if_else(legislature == 8 & gruppoP_recoded == "PDUP", 0, .)))
+
+joined_texts <- joined_texts %>%
+mutate(
+across(.cols = c("Gov_memb", "External_sup"),
+       .fns = ~ if_else(legislature == 9 & gruppoP_recoded == "SI", 0, .)))
+
+joined_texts <- joined_texts %>%
+mutate(
+across(.cols = c("Gov_memb", "External_sup"),
+       .fns = ~ if_else(legislature == 10 & gruppoP_recoded == "SI", 0, .)))
+
+joined_texts <- joined_texts %>%
+mutate(
+across(.cols = c("Gov_memb", "External_sup"),
+       .fns = ~ if_else(legislature == 10 & gruppoP_recoded == "PDS", 0, .)))
+
+joined_texts <- joined_texts %>%
+mutate(
+across(.cols = c("Gov_memb", "External_sup"),
+       .fns = ~ if_else(legislature == 11 & gruppoP_recoded == "UDC-CCD-CDU", 0, .)))
+
+joined_texts <- joined_texts %>%
+mutate(
+across(.cols = c("Gov_memb", "External_sup"),
+       .fns = ~ if_else(legislature == 12 & gruppoP_recoded == "DEMO", 0, .)))
+
+joined_texts <- joined_texts %>%
+mutate(
+across(.cols = c("Gov_memb", "External_sup"),
+       .fns = ~ if_else(legislature == 12 & gruppoP_recoded == "FLD", 0, .)))
+
+joined_texts <- joined_texts %>% 
+mutate(
+Gov_memb = if_else(legislature == 12 & gruppoP_recoded == "PROGR-F", 0, Gov_memb),
+External_sup = case_when(
+    legislature == 12 & gruppoP_recoded == "PROGR-F" & government_id == 55 ~ 0,
+    legislature == 12 & gruppoP_recoded == "PROGR-F" & government_id == 56 ~ 1,
+    TRUE ~ External_sup))
+
+joined_texts <- joined_texts %>%
+mutate(
+across(.cols = c("Gov_memb", "External_sup"),
+       .fns = ~ if_else(legislature == 12 & gruppoP_recoded == "LIFED", 0, .)))
+
+joined_texts <- joined_texts %>% 
+mutate(Gov_memb = if_else(legislature == 13 & gruppoP_recoded == "PD-ULIVO-DS", 1, Gov_memb),
+       External_sup = if_else(legislature == 13 & gruppoP_recoded == "PD-ULIVO-DS", 0, External_sup))
+
+joined_texts <- joined_texts %>% 
+mutate(Gov_memb = case_when(
+                        legislature == 13 & gruppoP_recoded == "UDR" & government_id == 58 ~ 1,
+                        legislature == 13 & gruppoP_recoded == "UDR" & government_id %in% c(57, 59, 60) ~ 0,
+                        TRUE ~ Gov_memb),
+       External_sup = if_else(legislature == 13 & gruppoP_recoded == "UDR", 0, External_sup))
+
+joined_texts <- joined_texts %>% 
+mutate(Gov_memb = case_when(
+                        legislature == 13 & gruppoP_recoded == "UDEUR" & government_id %in% c(59, 60) ~ 1,
+                        legislature == 13 & gruppoP_recoded == "UDEUR" & government_id %in% c(57, 58) ~ 0,
+                        TRUE ~ Gov_memb),
+       External_sup = if_else(legislature == 13 & gruppoP_recoded == "UDEUR", 0, External_sup))
+
+joined_texts <- joined_texts %>% 
+mutate(Gov_memb = case_when(
+                        legislature == 13 & gruppoP_recoded == "PDCI" & government_id %in% c(58, 59, 60) ~ 1,
+                        legislature == 13 & gruppoP_recoded == "PDCI" & government_id == 57 ~ 0,
+                        TRUE ~ Gov_memb),
+       External_sup = if_else(legislature == 13 & gruppoP_recoded == "PDCI", 0, External_sup))
+
+joined_texts <- joined_texts %>% 
+mutate(Gov_memb = if_else(legislature == 13 & gruppoP_recoded == "DEM-U", 1, Gov_memb),
+       External_sup = if_else(legislature == 13 & gruppoP_recoded == "DEM-U", 0, External_sup))
+
+joined_texts <- joined_texts %>% 
+mutate(Gov_memb = if_else(legislature == 15 & gruppoP_recoded == "SDPSE", 1, Gov_memb),
+       External_sup = if_else(legislature == 15 & gruppoP_recoded == "SDPSE", 0, External_sup))
+
+joined_texts <- joined_texts %>%
+mutate(
+across(.cols = c("Gov_memb", "External_sup"),
+       .fns = ~ if_else(legislature == 15 & gruppoP_recoded == "DCA-NPSI", 0, .)))
+
+joined_texts <- joined_texts %>%
+mutate(
+across(.cols = c("Gov_memb", "External_sup"),
+       .fns = ~ if_else(legislature == 16 & gruppoP_recoded == "FLPTP", 0, .)))
+
+joined_texts <- joined_texts %>% 
+mutate(Gov_memb = if_else(legislature == 16 & government_id == 64 & gruppoP_recoded == "NOI SUD-LIBERTA' ED AUTONOMIA/POPOLARI D'ITALIA DOMANI-PID/MOVIMENTO DI RESPONSABILITA' NAZIONALE-MRN/AZIONE POPOLARE/ALLEANZA DI CENTRO-ADC/INTESA POPOLARE", 1, Gov_memb),
+       External_sup = if_else(legislature == 16 & government_id == 64 & gruppoP_recoded == "NOI SUD-LIBERTA' ED AUTONOMIA/POPOLARI D'ITALIA DOMANI-PID/MOVIMENTO DI RESPONSABILITA' NAZIONALE-MRN/AZIONE POPOLARE/ALLEANZA DI CENTRO-ADC/INTESA POPOLARE", 0, External_sup))
+
+joined_texts <- joined_texts %>%
+                mutate(
+                        across(.cols = c("Gov_memb", "External_sup"),
+                               .fns = ~ if_else(legislature == 17 & gruppoP_recoded == "MDP-LU", 0, .)))
+
+joined_texts <- joined_texts %>% 
+                mutate(Gov_memb = if_else(legislature == 17 & gruppoP_recoded == "CI", 1, Gov_memb),
+                       External_sup = if_else(legislature == 17 & gruppoP_recoded == "CI", 0, External_sup))
+
+joined_texts <- joined_texts %>% 
+                mutate(Gov_memb = if_else(legislature == 18 & gruppoP_recoded == "IV", 0, Gov_memb),
+                       External_sup = if_else(legislature == 18 & gruppoP_recoded == "IV", 0, External_sup))
+
+map_dfr(joined_texts, ~ sum(is.na(.)) / length(.)) %>% select(Gov_memb, External_sup)
 
 saveRDS(joined_texts, file = "data/joined_texts.rds")
